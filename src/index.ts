@@ -1,5 +1,6 @@
 import { setupJmdictIndex } from "./indexes/jmdict";
-import { deleteIndex } from "./utils/meilisearch";
+import { setupJMnedictIndex } from "./indexes/jmnedict";
+import { deleteIndex } from "./utils/indexes";
 
-deleteIndex('jmdict')
-setupJmdictIndex()
+// await deleteIndex('jmdict')
+await setupJmdictIndex()

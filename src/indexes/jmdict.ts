@@ -1,23 +1,52 @@
 import { CONFIG } from "../lib/config"
 import { client } from "../lib/ky"
-import { meili } from "../lib/meilisearch"
-import type { GitHubRelease } from "../types/github"
 import { downloadAndExtractZip, extractWordsArray } from "../utils/file"
-import { getIndexExists } from "../utils/meilisearch"
+import { createIndex, getIndexExists } from "../utils/indexes"
+import type { GitHubAsset, GitHubRelease } from "../types/github"
+import type { IndexSetupResult } from "../types/indexes"
 
-async function getLatestJmdictUrl(): Promise<string> {
-  const apiUrl = "https://api.github.com/repos/scriptin/jmdict-simplified/releases/latest"
+export async function setupJmdictIndex(): Promise<IndexSetupResult> {
+  const { name: indexName } = CONFIG.meilisearch.indexes.jmdict
   
   try {
-    const response = await client(apiUrl)
-    if (!response.ok) {
-      throw new Error(`GitHub API request failed: ${response.status}`)
+    if (await getIndexExists(indexName)) {
+      console.log('Jmdict index already exists, skipping')
+      return { success: true, indexName, documentCount: 0 }
     }
+
+    const jmdictData = await downloadAndProcessJmdict()
+    await createIndex(indexName, jmdictData, CONFIG.meilisearch.indexes.jmdict.settings)
     
-    const release: GitHubRelease = await response.json()
+    return { 
+      success: true, 
+      indexName,
+      documentCount: jmdictData.length 
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('Failed to setup JMDict index:', errorMessage)
     
-    // Find the English examples JSON zip file
-    const asset = release.assets.find(asset => 
+    return { 
+      success: false, 
+      indexName,
+      error: errorMessage 
+    }
+  }
+}
+
+async function getLatestJmdictUrl(): Promise<string> {
+  const { 
+    github: { apiBaseUrl: githubBaseUrl, repositories: { jmdictSimplified } },
+    files: {
+      jmdict: {
+        fallbackUrl
+      }
+    }
+  } = CONFIG
+  try {
+    const release: GitHubRelease = await client(`${githubBaseUrl}/${jmdictSimplified}`).json()
+
+    const asset: GitHubAsset | undefined = release.assets.find(asset => 
       asset.name.includes('jmdict-examples-eng') && 
       asset.name.endsWith('.json.zip')
     )
@@ -33,75 +62,19 @@ async function getLatestJmdictUrl(): Promise<string> {
   } catch (error) {
     console.error('Failed to fetch latest release:', error)
     console.log('Falling back to hardcoded URL...')
-    return "https://github.com/scriptin/jmdict-simplified/releases/download/3.6.1%2B20250526122839/jmdict-examples-eng-3.6.1+20250526122839.json.zip"
+    return fallbackUrl
   }
 }
 
-export async function setupJmdictIndex() {
-  const indexName = 'jmdict'
-  const {
-    download: {
-      folder
-    },
-    files: { 
-      jmdict: { 
-        processedFilename, 
-        rawFilename
-      } 
-    } 
-  } = CONFIG
+async function downloadAndProcessJmdict() {
+  const { download: { folder }, files: { jmdict: { processedFilename, rawFilename } } } = CONFIG
   
-  try {
-    const url = await getLatestJmdictUrl()
-    console.log(`Using URL: ${url}`)
-    
-    const filePath = await downloadAndExtractZip(
-      url,
-      rawFilename
-    )
-    console.log(`File extracted to: ${filePath}`)
-    
-    await extractWordsArray(
-      filePath,
-      folder + processedFilename
-    )
-    
-    const jmdictData = await Bun.file(folder + processedFilename).json()
-    
-    const exists = await getIndexExists(indexName)
-    if (exists) {
-      console.log("JMDict index already exists")
-      return
-    }
-
-    console.log("Creating JMDict index...")
-    const index = meili.index(indexName)
-
-    const addedDocument = await index.addDocuments(jmdictData)
-    console.log("Documents added:", addedDocument)
-
-    await index.updateSettings({
-      distinctAttribute: "id",
-      rankingRules: [
-        "words",
-        "typo", 
-        "proximity",
-        "attribute",
-        "sort",
-        "exactness"
-      ],
-      searchableAttributes: [
-        "id",
-        "kanji.text",
-        "kana.text", 
-        "sense.gloss.text"
-      ]
-    })
-
-    console.log("JMDict index settings updated")
-    console.log("JMDict setup completed successfully")
-    
-  } catch (error) {
-    console.error(error)
-  }
+  const url = await getLatestJmdictUrl()
+  console.log(`Downloading from: ${url}`)
+  
+  const filePath = await downloadAndExtractZip(url, rawFilename)
+  console.log(`File extracted to: ${filePath}`)
+  
+  await extractWordsArray(filePath, folder + processedFilename) 
+  return await Bun.file(folder + processedFilename).json()
 }

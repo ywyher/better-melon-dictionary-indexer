@@ -3,9 +3,22 @@ import ky from "ky";
 export const client = ky.create({
   retry: {
     limit: 3,
-    delay: () => 1000,
+    delay: (attemptCount) => Math.min(1000 * Math.pow(2, attemptCount - 1), 10000), // Exponential backoff
+    statusCodes: [408, 413, 429, 500, 502, 503, 504], // Specific retry conditions
   },
-});
+  timeout: 30000,
+  hooks: {
+    beforeError: [
+      error => {
+        const { request, response } = error
+        if (request && response) {
+          console.error(`Request failed: ${request.method} ${request.url} - ${response.status}`)
+        }
+        return error
+      }
+    ]
+  }
+})
 
 export const colors = {
   green: '\x1b[32m',

@@ -7,7 +7,7 @@ services:
       - "7700:7700"
     environment:
       - MEILI_MASTER_KEY=75nFiVJ7bmro3eDT
-      - MEILI_HTTP_PAYLOAD_SIZE_LIMIT=131072000
+      - MEILI_HTTP_PAYLOAD_SIZE_LIMIT=209715200
     volumes:
       - ./meili_data:/meili_data
     restart: unless-stopped
