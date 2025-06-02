@@ -4,6 +4,7 @@
     "": {
       "name": "better-melon-meilisearch",
       "dependencies": {
+        "@scriptin/jmdict-simplified-types": "^3.6.1",
         "@t3-oss/env-core": "^0.13.6",
         "@types/yauzl-promise": "^4.0.1",
         "ky": "^1.8.1",
@@ -59,6 +60,8 @@
     "@node-rs/crc32-win32-ia32-msvc": ["@node-rs/crc32-win32-ia32-msvc@1.10.6", "", { "os": "win32", "cpu": "ia32" }, "sha512-DpDxQLaErJF9l36aghe1Mx+cOnYLKYo6qVPqPL9ukJ5rAGLtCdU0C+Zoi3gs9ySm8zmbFgazq/LvmsZYU42aBw=="],
 
     "@node-rs/crc32-win32-x64-msvc": ["@node-rs/crc32-win32-x64-msvc@1.10.6", "", { "os": "win32", "cpu": "x64" }, "sha512-5B1vXosIIBw1m2Rcnw62IIfH7W9s9f7H7Ma0rRuhT8HR4Xh8QCgw6NJSI2S2MCngsGktYnAhyUvs81b7efTyQw=="],
+
+    "@scriptin/jmdict-simplified-types": ["@scriptin/jmdict-simplified-types@3.6.1", "", {}, "sha512-vb0c/sq2eBETJgDxRmsSq5Ym0s6axt7MdPlQKvjA1+eVnk7fUB+OD/J0Xckek2QNqNgsiB37kFGuJDnCwFBunQ=="],
 
     "@t3-oss/env-core": ["@t3-oss/env-core@0.13.6", "", { "peerDependencies": { "arktype": "^2.1.0", "typescript": ">=5.0.0", "valibot": "^1.0.0-beta.7 || ^1.0.0", "zod": "^3.24.0 || ^4.0.0-beta.0" }, "optionalPeers": ["arktype", "typescript", "valibot", "zod"] }, "sha512-rH7FgcB1YGbv/tvv7mdJAxnNvRkK/gEqdVYBwO1AVvaWOTNuftqskxkEYyhM2O+lkNPJmTq5YBE7H+Unl7CLjg=="],
 

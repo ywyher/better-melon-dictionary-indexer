@@ -4,6 +4,7 @@ import { downloadAndExtractZip, extractWordsArray } from "../utils/file"
 import { createIndex, getIndexExists } from "../utils/indexes"
 import type { GitHubAsset, GitHubRelease } from "../types/github"
 import type { IndexSetupResult } from "../types/indexes"
+import type { JMdictWord } from "@scriptin/jmdict-simplified-types"
 
 export async function setupJmdictIndex(): Promise<IndexSetupResult> {
   const { name: indexName } = CONFIG.meilisearch.indexes.jmdict
@@ -15,6 +16,7 @@ export async function setupJmdictIndex(): Promise<IndexSetupResult> {
     }
 
     const jmdictData = await downloadAndProcessJmdict()
+
     await createIndex(indexName, jmdictData, CONFIG.meilisearch.indexes.jmdict.settings)
     
     return { 

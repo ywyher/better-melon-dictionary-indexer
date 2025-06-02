@@ -2,6 +2,7 @@ import { meili } from "../lib/meilisearch";
 import type { IndexSettings } from "../types";
 import type { Index } from "../types/indexes";
 
+// Updated index creation function
 export async function createIndex(indexName: Index, data: any[], settings: IndexSettings) {
   console.log(`Creating ${indexName} index...`)
   const index = meili.index(indexName)
@@ -14,11 +15,16 @@ export async function createIndex(indexName: Index, data: any[], settings: Index
       "words",
       "proximity",
       "attribute",
-      "sort"
+      "sort", // Important: sort rule for our kanji sorting
     ],
     searchableAttributes: [
       "kana.text",
-      "kanji.text",
+      "kanji.text", 
+      "id"
+    ],
+    filterableAttributes: [
+      "kana",
+      "kanji",
       "id"
     ],
   })

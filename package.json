@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build": "bun ./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -10,6 +13,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@scriptin/jmdict-simplified-types": "^3.6.1",
     "@t3-oss/env-core": "^0.13.6",
     "@types/yauzl-promise": "^4.0.1",
     "ky": "^1.8.1",

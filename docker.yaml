@@ -10,7 +10,7 @@ services:
       - MEILI_HTTP_PAYLOAD_SIZE_LIMIT=209715200
     volumes:
       - ./meili_data:/meili_data
-    restart: unless-stopped
+    restart: always
 
   meilisearch-ui:
     image: riccoxie/meilisearch-ui:latest

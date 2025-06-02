@@ -725,4 +725,3 @@ the result iam getting, these are just 2 i got 20
 my issue is i simply searched for が which contains no kanji
 why did it prioritaize entries that contains kanji and it didn't even provide the one without the kanji that i needed !!
 
-we need to fix this
