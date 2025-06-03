@@ -45,11 +45,16 @@ export const CONFIG = {
             "words",
             "proximity",
             "attribute",
-            "sort"
+            "sort", // Important: sort rule for our kanji sorting
           ],
           searchableAttributes: [
             "kana.text",
-            "kanji.text",
+            "kanji.text", 
+            "id"
+          ],
+          filterableAttributes: [
+            "kana",
+            "kanji",
             "id"
           ],
         }

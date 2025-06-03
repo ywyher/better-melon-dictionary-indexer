@@ -18,6 +18,7 @@ export type IndexSettings = {
   rankingRules: string[];
   searchableAttributes: string[]
   sortableAttributes?: string[]
+  filterableAttributes?: string[]
 }
 
 export type Meilisearch = {
