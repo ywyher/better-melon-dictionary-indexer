@@ -21,7 +21,12 @@ PORT=7700
 API_KEY= # master key for meilisearch -> 16 bytes or more
 ```
 
-## 3. Build the indexes
+## 3. Run docker compose
+```bash
+docker compose -f docker.yaml up -d
+```
+
+## 4. Build the indexes
 ```bash
 bun run build
 ```
