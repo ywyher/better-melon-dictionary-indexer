@@ -80,7 +80,7 @@ export async function downloadAndExtractZip(
   }
 }
 
-export async function extractWordsArray(inputFilePath: string, outputFilePath: string) {
+export async function extractArray(array: string, inputFilePath: string, outputFilePath: string) {
   try {
     const fileExists = await Bun.file(outputFilePath).exists()
     if(fileExists) {
@@ -90,15 +90,22 @@ export async function extractWordsArray(inputFilePath: string, outputFilePath: s
 
     const jsonData = await Bun.file(inputFilePath).json()
     
-    const wordsArray = jsonData.words
-    if (!Array.isArray(wordsArray)) {
+    const extractedArray = jsonData[array]
+    if (!Array.isArray(extractedArray)) {
       throw new Error('No words array found in the JSON file')
     }
     
-    await Bun.write(outputFilePath, JSON.stringify(wordsArray))
-    console.log(`Extracted ${wordsArray.length} words to ${outputFilePath}`)
+    console.log(`Extracted ${extractedArray.length} words`)
+    return extractedArray;
   } catch (error) {
     console.error('Error extracting words array:', error)
     throw error
   }
+}
+
+export function addIncrementalIds<T>(data: T[], idField: string = 'id', startFrom: number = 1): (T & Record<string, number>)[] {
+  return data.map((item, index) => ({
+    ...item,
+    [idField]: startFrom + index
+  }))
 }

@@ -7,8 +7,10 @@ export type Download = {
 
 export type File = {
   fallbackUrl: string
+  match: string
   processedFilename: string, 
   rawFilename: string
+  arrayToExtract: string
 }
 
 export type IndexSettings = {
@@ -19,24 +21,15 @@ export type IndexSettings = {
 }
 
 export type Meilisearch = {
-  indexes: {
-    jmdict: {
-      name: Index,
-      settings: IndexSettings;
-    },
-    jmnedict: {
-      name: Index,
-      settings: IndexSettings
-    }
-  }
+  indexes: Record<Index, {
+    name: Index,
+    settings: IndexSettings;
+  }>,
 }
 
 export type Config = {
   github: GithubConfig
   download: Download
-  files: {
-    jmdict: File,
-    jmnedict: File
-  },
+  files: Record<Index, File>
   meilisearch: Meilisearch
 }

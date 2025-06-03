@@ -1,3 +1,5 @@
-import { setupJmdictIndex } from "./indexes/jmdict";
+import { setupIndex } from "./utils/setup";
 
-await setupJmdictIndex()
+await setupIndex('jmdict')
+await setupIndex('jmnedict')
+await setupIndex('kanjidic2')

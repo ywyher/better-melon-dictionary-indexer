@@ -1,8 +1,8 @@
-export type Index = 'jmdict' | 'jmnedict'
+export type Index = 'jmdict' | 'jmnedict' | 'kanjidic2'
 
 export type IndexSetupResult =  {
   success: boolean
-  indexName: string
+  indexName: Index
   documentCount?: number
   error?: string
 }

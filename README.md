@@ -5,6 +5,8 @@ An API made using meilisearch to search required dictionaries for [Better Melon]
 
 ## Supported dictionaries
 - JMdict
+- JMnedict
+- Kanjidic2
 
 # Quick Start
 
