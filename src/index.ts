@@ -1,3 +1,4 @@
+import { deleteIndex } from "./utils/indexes";
 import { setupIndex } from "./utils/setup";
 
 await setupIndex('jmdict')

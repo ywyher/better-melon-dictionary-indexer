@@ -85,7 +85,7 @@ export async function extractArray(array: string, inputFilePath: string, outputF
     const fileExists = await Bun.file(outputFilePath).exists()
     if(fileExists) {
       console.log('File exists. nothing will be extracted')
-      return;
+      return await Bun.file(outputFilePath).json();
     }
 
     const jsonData = await Bun.file(inputFilePath).json()

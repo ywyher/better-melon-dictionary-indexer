@@ -94,6 +94,10 @@ export const CONFIG = {
           searchableAttributes: [
             "literal", 
             "readingMeaning.groups.meaning.value",
+          ],
+          filterableAttributes: [
+            "literal",
+            "readingMeaning"
           ]
         }
       }
