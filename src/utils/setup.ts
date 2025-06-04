@@ -1,6 +1,6 @@
 import { CONFIG } from "../lib/config"
 import { client } from "../lib/ky"
-import { addIncrementalIds, downloadAndExtractZip, extractArray } from "./file"
+import { addExtraJMdictInfo, addIncrementalIds, downloadAndExtractZip, extractArray } from "./file"
 import { createIndex, getIndexExists } from "./indexes"
 import type { GitHubAsset, GitHubRelease } from "../types/github"
 import type { Index, IndexSetupResult } from "../types/indexes"
@@ -84,6 +84,11 @@ async function downloadAndProcessIndex(index: Index) {
       if(!extractedData) return;
       
       data = addIncrementalIds(extractedData, 'id', 1)
+    }else if(index == 'jmdict') {
+      const extractedData = await extractArray(arrayToExtract, filePath, folder + processedFilename) 
+      if(!extractedData) return;
+      
+      data = addExtraJMdictInfo(extractedData)
     }else {
       data = await extractArray(arrayToExtract, filePath, folder + processedFilename) 
     }

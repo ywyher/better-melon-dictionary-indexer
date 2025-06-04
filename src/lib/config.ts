@@ -41,11 +41,11 @@ export const CONFIG = {
           distinctAttribute: "id",
           rankingRules: [
             "exactness",
-            "typo",
             "words",
+            "typo",
+            "sort",
             "proximity",
-            "attribute",
-            "sort", // Important: sort rule for our kanji sorting
+            "attribute"
           ],
           searchableAttributes: [
             "kana.text",
@@ -55,8 +55,25 @@ export const CONFIG = {
           filterableAttributes: [
             "kana",
             "kanji",
-            "id"
+            "kana.text",
+            "kanji.text",
+            "isKana",
+            "id",
           ],
+          sortableAttributes: [
+            "kana.text",
+            "kanji.text",
+            "isKana",
+            "kana.common",
+            "kanji.common",
+          ],
+          typoTolerance: {
+            "enabled": true,
+            "minWordSizeForTypos": {
+              "oneTypo": 4,
+              "twoTypos": 8
+            }
+          },
         }
       },
       jmnedict: {
@@ -68,8 +85,8 @@ export const CONFIG = {
             "typo", 
             "proximity",
             "attribute",
-            "sort",
-            "exactness"
+            "exactness",
+            "sort"
           ],
           searchableAttributes: [
             "id",

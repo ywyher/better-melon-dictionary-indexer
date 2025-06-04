@@ -5,6 +5,8 @@ import { mkdir } from 'fs/promises'
 import { pipeline } from 'stream/promises'
 import { CONFIG } from '../lib/config'
 import { clearLine, client, colors, createProgressBar, formatBytes } from '../lib/ky'
+import type { JMdictWord } from '@scriptin/jmdict-simplified-types'
+import { isHiragana, isKatakana } from 'wanakana'
 
 const { download: { folder } } = CONFIG
 
@@ -108,4 +110,15 @@ export function addIncrementalIds<T>(data: T[], idField: string = 'id', startFro
     ...item,
     [idField]: startFrom + index
   }))
+}
+
+export function addExtraJMdictInfo(data: JMdictWord[]) {
+  return data.map((item) => {
+    const isKana = (!item.kanji.length && item.kana.length) ? true : false
+    
+    return {
+      ...item,
+      isKana,
+    }
+  })
 }

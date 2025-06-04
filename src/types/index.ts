@@ -19,6 +19,13 @@ export type IndexSettings = {
   searchableAttributes: string[]
   sortableAttributes?: string[]
   filterableAttributes?: string[]
+  typoTolerance?: {
+    enabled: boolean;
+    minWordSizeForTypos: {
+      oneTypo: number,
+      twoTypos: number
+    }
+  }
 }
 
 export type Meilisearch = {

@@ -9,6 +9,7 @@
         "@types/yauzl-promise": "^4.0.1",
         "ky": "^1.8.1",
         "meilisearch": "^0.50.0",
+        "wanakana": "^5.3.1",
         "yauzl-promise": "^4.0.0",
         "zod": "^3.25.36",
       },
@@ -104,6 +105,8 @@
     "typescript": ["typescript@5.8.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="],
 
     "undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
+
+    "wanakana": ["wanakana@5.3.1", "", {}, "sha512-OSDqupzTlzl2LGyqTdhcXcl6ezMiFhcUwLBP8YKaBIbMYW1wAwDvupw2T9G9oVaKT9RmaSpyTXjxddFPUcFFIw=="],
 
     "yauzl-promise": ["yauzl-promise@4.0.0", "", { "dependencies": { "@node-rs/crc32": "^1.7.0", "is-it-type": "^5.1.2", "simple-invariant": "^2.0.1" } }, "sha512-/HCXpyHXJQQHvFq9noqrjfa/WpQC2XYs3vI7tBiAi4QiIU1knvYhZGaO1QPjwIVMdqflxbmwgMXtYeaRiAE0CA=="],
 
