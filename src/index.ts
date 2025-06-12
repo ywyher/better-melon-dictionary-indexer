@@ -1,8 +1,10 @@
-import { deleteIndex } from "./utils/indexes";
-import { setupIndex } from "./utils/setup";
+import { initializeJMdict } from "./indexes/jmdict";
+import { initializeJMnedict } from "./indexes/jmnedict";
+import { initializeKanjidic2 } from "./indexes/kanjidic2";
+import { initializeNHK } from "./indexes/nkh";
 
-await deleteIndex('jmdict')
+await initializeJMdict()
+await initializeKanjidic2()
+await initializeJMnedict()
 
-setTimeout(async () => {
-  await setupIndex('jmdict')
-}, 2000);
+// await initializeNHK()

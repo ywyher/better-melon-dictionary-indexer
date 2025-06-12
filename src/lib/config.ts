@@ -7,30 +7,37 @@ export const CONFIG = {
       jmdictSimplified: 'repos/scriptin/jmdict-simplified/releases/latest'
     }
   },
-  download: {
-    folder: '.download/',
+  folders: {
+    downloads: '.downloads/',
+    extracts: '.extracts/',
+    dictionaries: '.dictionaries/',
+    dict: 'dict/'
   },
   files: {
     jmdict: {
+      source: 'remote',
       fallbackUrl: "https://github.com/scriptin/jmdict-simplified/releases/download/3.6.1%2B20250526122839/jmdict-examples-eng-3.6.1+20250602123110.json.zip",
       match: "jmdict-examples-eng",
-      rawFilename: 'jmdict-raw.json',
-      processedFilename: 'jmdict.json',
+      filename: 'jmdict',
       arrayToExtract: 'words',
     },
     jmnedict: {
+      source: 'remote',
       fallbackUrl: "https://github.com/scriptin/jmdict-simplified/releases/download/3.6.1%2B20250526122839/jmnedict-all-3.6.1+20250602123110.json.zip",
       match: "jmnedict-all",
-      rawFilename: 'jmnedict-raw.json',
-      processedFilename: 'jmnedict.json',
+      filename: 'jmnedict',
       arrayToExtract: 'words',
     },
     kanjidic2: {
+      source: 'remote',
       fallbackUrl: "https://github.com/scriptin/jmdict-simplified/releases/download/3.6.1%2B20250602123110/kanjidic2-en-3.6.1+20250602123110.json.zip",
       match: "kanjidic2-en",
-      rawFilename: 'kanjidic2-raw.json',
-      processedFilename: 'kanjidic2.json',
+      filename: 'kanjidic2',
       arrayToExtract: 'characters',
+    },
+    nhk: {
+      source: "local" as const,
+      filename: 'nhk',
     },
   },
   meilisearch: {
@@ -116,6 +123,24 @@ export const CONFIG = {
             "literal",
             "readingMeaning"
           ]
+        }
+      },
+      nhk: {
+        name: 'nhk',
+        settings: {
+          distinctAttribute: "text",
+          rankingRules: [
+            "exactness",
+            "typo", 
+            "words",
+            "proximity",
+            "attribute",
+            "sort",
+          ],
+          searchableAttributes: [
+            "text", 
+            "pitch",
+          ],
         }
       }
     }

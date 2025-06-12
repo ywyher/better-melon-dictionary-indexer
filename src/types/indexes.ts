@@ -1,4 +1,4 @@
-export type Index = 'jmdict' | 'jmnedict' | 'kanjidic2'
+export type Index = 'jmdict' | 'jmnedict' | 'kanjidic2' | 'nhk'
 
 export type IndexSetupResult =  {
   success: boolean

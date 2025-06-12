@@ -26,19 +26,19 @@ export async function getIndexExists(index: Index) {
 }
 
 export async function deleteIndex(index: Index) {
-  const folder = CONFIG.download.folder
-  const processedFileNam = CONFIG.files[index].processedFilename
-  const rawFileName = CONFIG.files[index].rawFilename
+  // const folder = CONFIG.folders.dictionaries
+  // const processedFileNam = CONFIG.files[index].processedFilename
+  // const rawFileName = CONFIG.files[index].rawFilename
   try {
-    const processedFileNamToDelete = Bun.file(folder + processedFileNam)
-    if(await processedFileNamToDelete.exists()) {
-      await processedFileNamToDelete.delete()
-    }
+    // const processedFileNamToDelete = Bun.file(folder + processedFileNam)
+    // if(await processedFileNamToDelete.exists()) {
+    //   await processedFileNamToDelete.delete()
+    // }
     
-    const rawFileNameToDelete = Bun.file(folder + rawFileName)
-    if(await rawFileNameToDelete.exists()) {
-      await rawFileNameToDelete.delete()
-    }
+    // const rawFileNameToDelete = Bun.file(folder + rawFileName)
+    // if(await rawFileNameToDelete.exists()) {
+    //   await rawFileNameToDelete.delete()
+    // }
 
     await meili.deleteIndex(index)
   } catch(error) {

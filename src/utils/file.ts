@@ -6,26 +6,32 @@ import { pipeline } from 'stream/promises'
 import { CONFIG } from '../lib/config'
 import { clearLine, client, colors, createProgressBar, formatBytes } from '../lib/ky'
 import type { JMdictWord } from '@scriptin/jmdict-simplified-types'
-import { isHiragana, isKatakana } from 'wanakana'
+import type { Index } from '../types/indexes'
+import type { GitHubAsset, GitHubRelease } from '../types/github'
+import { fileExists, getFilePath, isRemoteFile, validateExtension, validateRequiredParams } from './utils'
+import type { ProcessingResult } from '../types'
 
-const { download: { folder } } = CONFIG
+const { folders: { downloads, extracts } } = CONFIG
 
-export async function downloadAndExtractZip(
+export async function downloadFile({ url, filename, extension } :{
   url: string,
-  filename: string
-): Promise<string> {
-  if (!url || !filename) {
-    throw new Error('URL and filename are required')
-  }
+  filename: string,
+  extension: string,
+}): Promise<ProcessingResult<string>> {
+  validateRequiredParams({ url, filename, extension });
+  validateExtension(extension)
   
   try {
-    const fileExist = await Bun.file(folder + filename).exists()
-    if(fileExist) {
-      console.log('File exists using cached version')
-      return folder + filename
+    const filePath = getFilePath(downloads, filename, extension)
+    if (await fileExists(filePath)) {
+      console.log('File exists, using cached version');
+      return {
+        success: true,
+        data: filePath
+      };
     }
 
-    console.log('Downloading zip file...')
+    console.log(`Downloading ${filename}.${extension}...`)
     const response = await client(url, {
       onDownloadProgress(progress) {
         const percent = Math.round(progress.percent * 100);
@@ -51,74 +57,139 @@ export async function downloadAndExtractZip(
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-  
-    const uint8Array = new Uint8Array(await response.arrayBuffer())
-    const zipBuffer = Buffer.from(uint8Array)
+    
+    const data = await response.arrayBuffer()
+    await Bun.write(filePath, data)
+
+    return {
+      success: true,
+      data: filePath
+    }
+  } catch(error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return {
+      success: false,
+      error: `Download failed: ${message}`,
+      code: 'DOWNLOAD_ERROR'
+    };
+  }
+}
+
+export async function extractZip({ zipFilePath, extension, outputFilename }: {
+  zipFilePath: string, 
+  outputFilename: string, 
+  extension: string
+}): Promise<ProcessingResult<string>> {
+  validateRequiredParams({ zipFilePath, outputFilename, extension });
+  validateExtension(extension)
+
+  try {
+    const outputPath = getFilePath(extracts, outputFilename, extension);
+    if (await fileExists(outputPath)) {
+      console.log('Extracted file exists, using cached version');
+      return {
+        success: true,
+        data: outputPath
+      };
+    }
+
+    const fileBuffer = await Bun.file(zipFilePath).arrayBuffer()
+    const zipBuffer = Buffer.from(new Uint8Array(fileBuffer));
   
     const zip = await yauzl.fromBuffer(zipBuffer)
     let extractedFilePath: string | null = null
 
     for await (const entry of zip) {
-      const fullPath = path.join(folder, filename)
+      const fullPath = path.join(outputPath)
       await mkdir(path.dirname(fullPath), { recursive: true })
       const readStream = await entry.openReadStream()
       const writeStream = createWriteStream(fullPath)
       await pipeline(readStream, writeStream)
 
       extractedFilePath = fullPath
-      console.log(`fullPath`, fullPath)
     }
+    
     if (!extractedFilePath) {
       throw new Error('No files were extracted from the zip archive')
     }
     
     await zip.close()
-    return extractedFilePath
-  } catch(error) {
-    if (error instanceof Error) {
-      throw new Error(`Download failed: ${error.message}`)
-    }
-    throw error
-  }
-}
-
-export async function extractArray(array: string, inputFilePath: string, outputFilePath: string) {
-  try {
-    const fileExists = await Bun.file(outputFilePath).exists()
-    if(fileExists) {
-      console.log('File exists. nothing will be extracted')
-      return await Bun.file(outputFilePath).json();
-    }
-
-    const jsonData = await Bun.file(inputFilePath).json()
-    
-    const extractedArray = jsonData[array]
-    if (!Array.isArray(extractedArray)) {
-      throw new Error('No words array found in the JSON file')
-    }
-    
-    console.log(`Extracted ${extractedArray.length} words`)
-    return extractedArray;
-  } catch (error) {
-    console.error('Error extracting words array:', error)
-    throw error
-  }
-}
-
-export function addIncrementalIds<T>(data: T[], idField: string = 'id', startFrom: number = 1): (T & Record<string, number>)[] {
-  return data.map((item, index) => ({
-    ...item,
-    [idField]: startFrom + index
-  }))
-}
-
-export function addExtraJMdictInfo(data: JMdictWord[]) {
-  return data.map((item) => {
-    const isKana = (!item.kanji.length && item.kana.length) ? true : false
-    
     return {
-      ...item,
-      isKana,
+      success: true,
+      data: extractedFilePath
     }
-  })
+  } catch(error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return {
+      success: false,
+      error: `Extraction failed: ${message}`,
+      code: 'EXTRACTION_ERROR'
+    };
+  }
+}
+
+export async function extractArray({ arrayKey, jsonFilePath }: {
+  arrayKey: string,
+  jsonFilePath: string,
+}): Promise<unknown[]> {
+  validateRequiredParams({ arrayKey, jsonFilePath });
+
+  try {
+    if (!(await fileExists(jsonFilePath))) {
+      throw new Error(`File not found: ${jsonFilePath}`);
+    }
+    
+    const jsonData = await Bun.file(jsonFilePath).json()
+    
+    const extractedArray = jsonData[arrayKey];
+    if (!Array.isArray(extractedArray)) {
+      throw new Error(`Property '${arrayKey}' is not an array or doesn't exist in the JSON file`);
+    }
+    
+    console.log(`Extracted ${extractedArray.length} items`);
+    return extractedArray;
+    
+  } catch (error) {
+    console.error('Error extracting array:', error);
+    throw error;
+  }
+}
+
+export async function getLatestIndexUrl(index: Index): Promise<string> {
+  const { 
+    github: { apiBaseUrl: githubBaseUrl, repositories: { jmdictSimplified } },
+    files
+  } = CONFIG;
+
+  const fileConfig = files[index];
+  
+  if (!isRemoteFile(fileConfig)) {
+    throw new Error(`Cannot get URL for local file: ${index}`);
+  }
+
+  const { fallbackUrl, match } = fileConfig;
+  
+  try {
+    const release: GitHubRelease = await client(`${githubBaseUrl}/${jmdictSimplified}`).json();
+
+    const asset: GitHubAsset | undefined = release.assets.find(asset => 
+      asset.name.includes(match) && 
+      asset.name.endsWith('.json.zip')
+    );
+    
+    if (!asset) {
+      console.warn(`Could not find ${match} JSON zip file in latest release, using fallback`);
+      return fallbackUrl;
+    }
+    
+    console.log(`Found latest release: ${release.tag_name}`);
+    console.log(`Asset: ${asset.name}`);
+    
+    return asset.browser_download_url;
+    
+  } catch (error) {
+    console.error('Failed to fetch latest release:', error);
+    console.log('Falling back to hardcoded URL...');
+    return fallbackUrl;
+  }
 }
