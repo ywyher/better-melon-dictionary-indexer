@@ -1,3 +1,4 @@
+// Updated config.ts
 import type { Config } from "../types";
 
 export const CONFIG = {
@@ -20,6 +21,11 @@ export const CONFIG = {
       match: "jmdict-examples-eng",
       filename: 'jmdict',
       arrayToExtract: 'words',
+      useSubdirectory: false,
+      requiresMerge: false,
+      processing: {
+        type: 'addExtraInfo',
+      }
     },
     jmnedict: {
       source: 'remote',
@@ -27,6 +33,11 @@ export const CONFIG = {
       match: "jmnedict-all",
       filename: 'jmnedict',
       arrayToExtract: 'words',
+      useSubdirectory: false,
+      requiresMerge: false,
+      processing: {
+        type: 'none'
+      }
     },
     kanjidic2: {
       source: 'remote',
@@ -34,10 +45,29 @@ export const CONFIG = {
       match: "kanjidic2-en",
       filename: 'kanjidic2',
       arrayToExtract: 'characters',
+      requiresMerge: false,
+      useSubdirectory: false,
+      processing: {
+        addIds: true,
+        idField: 'id',
+        startId: 1
+      }
     },
     nhk: {
       source: "local" as const,
       filename: 'nhk',
+      useSubdirectory: true,
+      requiresMerge: true,
+      mergeConfig: {
+        extractedDir: '.extracts/nhk',
+        flat: true
+      },
+      processing: {
+        type: 'editStructure',
+        addIds: true,
+        idField: 'id',
+        startId: 1
+      }
     },
   },
   meilisearch: {
@@ -139,7 +169,9 @@ export const CONFIG = {
           ],
           searchableAttributes: [
             "text", 
-            "pitch",
+            "type",
+            "reading",
+            "pitches",
           ],
         }
       }

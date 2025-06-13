@@ -1,10 +1,15 @@
-import { initializeJMdict } from "./indexes/jmdict";
-import { initializeJMnedict } from "./indexes/jmnedict";
-import { initializeKanjidic2 } from "./indexes/kanjidic2";
-import { initializeNHK } from "./indexes/nkh";
+import { indexes } from "./lib/constants";
+import { initializeDictionary } from "./utils/initialize";
 
-await initializeJMdict()
-await initializeKanjidic2()
-await initializeJMnedict()
+const results = await Promise.all(
+  indexes.map(dict => initializeDictionary(dict))
+);
 
-// await initializeNHK()
+results.forEach((result, index) => {
+  const dictName = indexes[index];
+  if (result.success) {
+    console.log(`✓ ${dictName}: ${result.documentCount} documents indexed`);
+  } else {
+    console.error(`✗ ${dictName}: ${result.error}`);
+  }
+});

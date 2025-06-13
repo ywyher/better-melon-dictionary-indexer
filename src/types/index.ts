@@ -11,17 +11,35 @@ export type Folders = {
   dict: string
 }
 
-export type RemoteFile = {
+export type ProcessingType = 'none' | 'addExtraInfo' | 'editStructure';
+
+export type ProcessingConfig = Partial<{
+  type: ProcessingType;
+  addIds: boolean;
+  idField: string;
+  startId: number
+}>
+
+export type SharedFileProperties = {
+  filename: string;
+  processing: ProcessingConfig;
+  useSubdirectory?: boolean;
+  requiresMerge?: boolean;
+  mergeConfig?: { 
+    extractedDir: string;
+    flat: boolean;
+  }
+} 
+
+export type RemoteFile = SharedFileProperties & {
   source: "remote";
   fallbackUrl: string;
   match: string;
-  filename: string;
   arrayToExtract: string;
 }
 
-export type LocalFile = {
+export type LocalFile = SharedFileProperties & {
   source: "local";
-  filename: string;
 }
 
 export type File = RemoteFile | LocalFile;
