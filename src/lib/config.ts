@@ -158,7 +158,7 @@ export const CONFIG = {
       nhk: {
         name: 'nhk',
         settings: {
-          distinctAttribute: "text",
+          distinctAttribute: "id",
           rankingRules: [
             "exactness",
             "typo", 
@@ -168,7 +168,7 @@ export const CONFIG = {
             "sort",
           ],
           searchableAttributes: [
-            "text", 
+            "word", 
             "type",
             "reading",
             "pitches",
