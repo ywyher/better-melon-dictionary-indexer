@@ -7,6 +7,7 @@ An API made using meilisearch to search required dictionaries for [Better Melon]
 - JMdict
 - JMnedict
 - Kanjidic2
+- [Pitch] NHK
 
 # Quick Start
 
@@ -36,5 +37,6 @@ bun run build
 
 # Credit
 - [Better Melon](https://github.com/ywyher/better-melon) -> what is the purpose of better-melon-dictionary-indexer without better-melon am i right ??
-- [Electronic Dictionary Research and Development Group](https://www.edrdg.org/) -> all dictionaries used belongs to them
+- [Electronic Dictionary Research and Development Group](https://www.edrdg.org/) -> JMdict/JMnedict/Kanjidic2 belongs to them
+- [Monokakido](https://www.monokakido.jp/en/dictionaries/nhkaccent2/index.html) -> NHK Pitch accent dictionary belongs to them
 - [ywyh (Me)](https://github.com/ywyher) – for being goated ig
