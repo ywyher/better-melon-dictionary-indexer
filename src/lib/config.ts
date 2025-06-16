@@ -161,7 +161,7 @@ export const CONFIG = {
           distinctAttribute: "id",
           rankingRules: [
             "exactness",
-            "typo", 
+            "typo",
             "words",
             "proximity",
             "attribute",
@@ -173,6 +173,11 @@ export const CONFIG = {
             "reading",
             "pitches",
           ],
+          filterableAttributes: [
+            "pitches",
+            "word",
+            "reading"
+          ]
         }
       }
     }

@@ -1,4 +1,5 @@
 import { indexes } from "./lib/constants";
+import { deleteIndex } from "./utils/indexes";
 import { initializeDictionary } from "./utils/initialize";
 
 const results = await Promise.all(
