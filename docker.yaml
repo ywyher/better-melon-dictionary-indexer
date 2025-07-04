@@ -11,12 +11,9 @@ services:
     volumes:
       - ./meili_data:/meili_data
     restart: always
-
-  meilisearch-ui:
-    image: riccoxie/meilisearch-ui:latest
-    container_name: meilisearch-ui
-    ports:
-      - "24900:24900"
-    restart: on-failure:5
-    depends_on:
-      - meilisearch
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
