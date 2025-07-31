@@ -1,5 +1,8 @@
+> [!warning]
+> The project has been moved into the [better melon monorepo](https://github.com/ywyher/better-melon).
+
 # What is it ?
-An API made using meilisearch to search required dictionaries for [Better Melon](https://github.com/ywyher/better-melon) at high speed
+An utility made to index japanese dictionaries in meilisearch to search required dictionaries for [Better Melon](https://github.com/ywyher/better-melon) at high speed
 
 # Roadmap
 
